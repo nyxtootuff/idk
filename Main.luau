@@ -1,6 +1,6 @@
--- Atlas Access UI (Clean Rewrite + Hover Buttons + PC Toggle)
+-- Atlas Access UI (Fixed Complete Rewrite)
 -- Part 1/4
--- Core UI + Animation + Dragging + Toggle
+-- Core UI + Stars + Dragging + Toggle
 
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
@@ -21,12 +21,11 @@ gui.ResetOnSpawn = false
 gui.Parent = player:WaitForChild("PlayerGui")
 
 
-
 ------------------------------------------------
 -- HELPERS
 ------------------------------------------------
 
-local function addCorner(parent, radius)
+local function addCorner(parent,radius)
 
 	local corner = Instance.new("UICorner")
 	corner.CornerRadius = UDim.new(0,radius)
@@ -59,7 +58,7 @@ local panel = Instance.new("Frame")
 
 panel.Name = "MainPanel"
 panel.Size = UDim2.new(0,600,0,330)
-panel.Position = UDim2.new(0.5,-300,0.5,-165)
+panel.Position = UDim2.new(.5,-300,.5,-165)
 panel.BackgroundColor3 = Color3.fromRGB(25,25,32)
 panel.BorderSizePixel = 0
 panel.Active = true
@@ -78,7 +77,7 @@ addStroke(
 
 
 ------------------------------------------------
--- ANIMATED STAR BACKGROUND
+-- STAR BACKGROUND
 ------------------------------------------------
 
 local starContainer = Instance.new("Frame")
@@ -103,8 +102,8 @@ local function createStar()
 	star.Parent = starContainer
 
 
-	local x = math.random(-50,550)
-	local y = math.random(-50,300)
+	local x = math.random(-40,550)
+	local y = math.random(-40,300)
 
 
 	star.Position = UDim2.new(
@@ -142,9 +141,9 @@ local function createStar()
 
 			Position = UDim2.new(
 				0,
-				x + 150,
+				x + 80,
 				0,
-				y + 150
+				y + 80
 			),
 
 			BackgroundTransparency = 1
@@ -195,7 +194,6 @@ local dragStart
 local startPosition
 
 
-
 panel.InputBegan:Connect(function(input)
 
 	if input.UserInputType == Enum.UserInputType.MouseButton1
@@ -213,9 +211,7 @@ panel.InputBegan:Connect(function(input)
 
 end)
 
-------------------------------------------------
--- DRAGGING CONTINUED
-------------------------------------------------
+
 
 UserInputService.InputChanged:Connect(function(input)
 
@@ -230,11 +226,9 @@ UserInputService.InputChanged:Connect(function(input)
 		panel.Position = UDim2.new(
 
 			startPosition.X.Scale,
-
 			startPosition.X.Offset + delta.X,
 
 			startPosition.Y.Scale,
-
 			startPosition.Y.Offset + delta.Y
 
 		)
@@ -259,7 +253,7 @@ end)
 
 
 ------------------------------------------------
--- TOGGLE FUNCTION
+-- TOGGLE
 ------------------------------------------------
 
 local opened = true
@@ -273,15 +267,13 @@ local function toggleUI()
 
 end
 
-
-
 ------------------------------------------------
 -- PC RIGHT SHIFT TOGGLE
 ------------------------------------------------
 
 if UserInputService.KeyboardEnabled then
 
-	UserInputService.InputBegan:Connect(function(input, processed)
+	UserInputService.InputBegan:Connect(function(input,processed)
 
 		if processed then
 			return
@@ -323,7 +315,7 @@ end
 
 
 ------------------------------------------------
--- MOBILE A BUTTON
+-- MOBILE TOGGLE BUTTON
 ------------------------------------------------
 
 if UserInputService.TouchEnabled then
@@ -352,13 +344,11 @@ if UserInputService.TouchEnabled then
 	)
 
 
-
 	toggle.Activated:Connect(function()
 
 		toggleUI()
 
 	end)
-
 
 end
 
@@ -400,12 +390,237 @@ subtitle.TextXAlignment = Enum.TextXAlignment.Left
 subtitle.ZIndex = 5
 subtitle.Parent = panel
 
+
+
+------------------------------------------------
+-- DIVIDER
+------------------------------------------------
+
+local divider = Instance.new("Frame")
+
+divider.Size = UDim2.new(1,-60,0,2)
+divider.Position = UDim2.new(0,30,0,100)
+divider.BackgroundColor3 = Color3.fromRGB(70,70,70)
+divider.BorderSizePixel = 0
+divider.ZIndex = 5
+divider.Parent = panel
+
+
+
+------------------------------------------------
+-- STATUS DOT
+------------------------------------------------
+
+local dot = Instance.new("Frame")
+
+dot.Size = UDim2.new(0,14,0,14)
+dot.Position = UDim2.new(0,35,0,130)
+dot.BackgroundColor3 = Color3.fromRGB(255,170,25)
+dot.ZIndex = 5
+dot.Parent = panel
+
+
+addCorner(dot,100)
+
+
+
+------------------------------------------------
+-- STATUS TEXT
+------------------------------------------------
+
+local status = Instance.new("TextLabel")
+
+status.Size = UDim2.new(1,-90,0,30)
+status.Position = UDim2.new(0,65,0,122)
+status.BackgroundTransparency = 1
+status.Text = "Atlas Scripting Group membership not detected."
+status.TextColor3 = Color3.new(1,1,1)
+status.Font = Enum.Font.Gotham
+status.TextSize = 15
+status.TextXAlignment = Enum.TextXAlignment.Left
+status.ZIndex = 5
+status.Parent = panel
+
+
+
+------------------------------------------------
+-- DESCRIPTION
+------------------------------------------------
+
+local description = Instance.new("TextLabel")
+
+description.Size = UDim2.new(.85,0,0,45)
+description.Position = UDim2.new(.075,0,0,165)
+description.BackgroundTransparency = 1
+description.Text = "This script requires membership in the official Atlas Scripting Group before it can be used."
+description.TextWrapped = true
+description.TextColor3 = Color3.fromRGB(210,210,210)
+description.Font = Enum.Font.Gotham
+description.TextSize = 13
+description.ZIndex = 5
+description.Parent = panel
+
+------------------------------------------------
+-- BUTTON CREATOR WITH HOVER
+------------------------------------------------
+
+local function createButton(text,position,color)
+
+	local button = Instance.new("TextButton")
+
+	button.Size = UDim2.new(0,540,0,38)
+	button.Position = position
+	button.BackgroundColor3 = color
+	button.Text = text
+	button.TextColor3 = Color3.new(1,1,1)
+	button.Font = Enum.Font.GothamBold
+	button.TextSize = 16
+	button.ZIndex = 5
+	button.Parent = panel
+
+
+	addCorner(button,12)
+
+
+
+	local normalSize = button.Size
+	local normalPosition = position
+
+
+
+	------------------------------------------------
+	-- HOVER EXPAND
+	------------------------------------------------
+
+	button.MouseEnter:Connect(function()
+
+		TweenService:Create(
+
+			button,
+
+			TweenInfo.new(
+				0.15,
+				Enum.EasingStyle.Quad,
+				Enum.EasingDirection.Out
+			),
+
+			{
+
+				Size = UDim2.new(
+					0,
+					555,
+					0,
+					42
+				),
+
+
+				Position = UDim2.new(
+
+					position.X.Scale,
+					position.X.Offset - 7,
+
+					position.Y.Scale,
+					position.Y.Offset - 2
+
+				)
+
+			}
+
+		):Play()
+
+	end)
+
+
+
+	------------------------------------------------
+	-- HOVER RESET
+	------------------------------------------------
+
+	button.MouseLeave:Connect(function()
+
+		TweenService:Create(
+
+			button,
+
+			TweenInfo.new(
+				0.15,
+				Enum.EasingStyle.Quad,
+				Enum.EasingDirection.Out
+			),
+
+			{
+
+				Size = normalSize,
+
+				Position = normalPosition
+
+			}
+
+		):Play()
+
+	end)
+
+
+
+	return button
+
+end
+
+
+
+------------------------------------------------
+-- BUTTONS
+------------------------------------------------
+
+local join = createButton(
+
+	"Join Atlas Scripting Group",
+
+	UDim2.new(
+		0,
+		30,
+		0,
+		230
+	),
+
+	Color3.fromRGB(
+		70,
+		140,
+		245
+	)
+
+)
+
+
+
+local verify = createButton(
+
+	"Verify Membership",
+
+	UDim2.new(
+		0,
+		30,
+		0,
+		275
+	),
+
+	Color3.fromRGB(
+		52,
+		52,
+		52
+	)
+
+)
+
+
+
 ------------------------------------------------
 -- DEFAULT STATUS
 ------------------------------------------------
 
 local defaultText =
 	"Atlas Scripting Group membership not detected."
+
 
 
 local function resetStatus()
@@ -517,8 +732,6 @@ verify.Activated:Connect(function()
 
 end)
 
-
-
 ------------------------------------------------
 -- JOIN GROUP BUTTON
 ------------------------------------------------
@@ -551,7 +764,9 @@ join.Activated:Connect(function()
 
 
 
-	-- Opens Roblox group invite prompt
+	------------------------------------------------
+	-- OPEN GROUP INVITE
+	------------------------------------------------
 
 	pcall(function()
 
@@ -564,7 +779,9 @@ join.Activated:Connect(function()
 
 
 
-	-- Notification
+	------------------------------------------------
+	-- NOTIFICATION
+	------------------------------------------------
 
 	pcall(function()
 
@@ -587,16 +804,14 @@ join.Activated:Connect(function()
 
 end)
 
+
+
 ------------------------------------------------
 -- FINAL UI SETTINGS
 ------------------------------------------------
 
--- Keeps panel above other UI elements
-
 panel.ZIndex = 1
 
-
--- Makes sure buttons stay clickable
 
 join.Active = true
 verify.Active = true
@@ -604,10 +819,8 @@ verify.Active = true
 
 
 ------------------------------------------------
--- OPTIONAL CLEANUP
+-- CLEANUP DUPLICATES
 ------------------------------------------------
-
--- Prevents duplicate UI if script is reloaded
 
 gui.AncestryChanged:Connect(function()
 
@@ -622,8 +835,8 @@ end)
 
 
 ------------------------------------------------
--- SCRIPT LOADED
+-- LOADED MESSAGE
 ------------------------------------------------
 
 print("Atlas Access UI Loaded Successfully")
-print("Group ID:", GROUP_ID)
+print("Group ID:",GROUP_ID)
